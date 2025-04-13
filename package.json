@@ -19,12 +19,12 @@
     "recharts": "^2.15.1"
   },
 "scripts": {
-  "start": "react-scripts start",
+  "start": "serve -s build",
   "build": "react-scripts build",
-  "preview": "serve -s build",
   "test": "react-scripts test",
   "eject": "react-scripts eject"
 },
+
 
   "eslintConfig": {
     "extends": "react-app"
