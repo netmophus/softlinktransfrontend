@@ -16,7 +16,7 @@ const Footer = () => {
       }}
     >
       <Typography variant="body2">
-        © {new Date().getFullYear()} NIYYA. Tous droits réservés.
+        © {new Date().getFullYear()} SOFTLINK. Tous droits réservés.
       </Typography>
       <Typography variant="body2">
         <Link href="/terms" color="inherit" sx={{ textDecoration: "none", mx: 1 }}>

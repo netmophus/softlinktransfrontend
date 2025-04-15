@@ -1,11 +1,35 @@
+import { Box } from "@mui/material";
+
 const HomePage = () => {
-    return (
-      <div>
-        <h1>Bienvenue sur votre tableau de bord</h1>
-        <p>Cette page est protégée et nécessite une connexion.</p>
-      </div>
-    );
-  };
-  
-  export default HomePage;
-  
+  return (
+    <Box
+      sx={{
+        width: "100vw",
+        height: "100vh",
+        overflow: "hidden",           // ✅ Aucun scroll
+        backgroundColor: "#fff",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 0,
+        margin: 0,
+        boxSizing: "border-box",
+        marginTop:-7,
+      }}
+    >
+      <Box
+        component="img"
+        src="/softlinkTransfert.png"    // Remplace si besoin
+        alt="Image de couverture"
+        sx={{
+          maxWidth: "90%",
+          maxHeight: "90%",
+          objectFit: "contain",
+          display: "block",
+        }}
+      />
+    </Box>
+  );
+};
+
+export default HomePage;
