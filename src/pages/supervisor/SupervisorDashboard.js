@@ -1,81 +1,3 @@
-// import React from "react";
-// import { Container, Grid, Paper, Typography, List, ListItem, ListItemText, Button, Box } from "@mui/material";
-// import { useNavigate } from "react-router-dom";
-// import GroupAddIcon from "@mui/icons-material/GroupAdd";
-// const SupervisorDashboard = () => {
-//   const navigate = useNavigate();
-
-//   const stats = {
-//     totalCashiers: 5,
-//     totalTransactions: 750,
-//     totalAmount: 2500000,
-//     pendingDeposits: 3,
-//     pendingWithdrawals: 2,
-//     recentActivities: [
-//       { cashier: "Oumar Kane", action: "Dépôt", amount: "200,000 XOF", date: "03-03-2024" },
-//       { cashier: "Fatou Ndiaye", action: "Retrait", amount: "150,000 XOF", date: "04-03-2024" },
-//     ],
-//   };
-
-//   return (
-//     <Container>
-//       {/* En-tête avec bouton */}
-//       <Box display="flex" justifyContent="space-between" alignItems="center" mt={15} mb={3}>
-//         <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-//           Tableau de bord Superviseur
-//         </Typography>
-
-
-      
-//       </Box>
-
-
-//       <Grid container spacing={3}>
-//          {/* 🔹 Carte pour creer un caissiers */}
-//         <Grid item xs={12} md={4}>
-//           <Paper sx={{ p: 3, textAlign: "center" }}>
-//             <Typography variant="h6">Creer un Caissier</Typography>
-//             <Button
-//               variant="contained"
-//               color="primary"
-//               startIcon={<GroupAddIcon />}
-//               onClick={() => navigate("/supervisor/cashiers")}
-//               sx={{ mt: 2 }}
-//             >
-//               Accéder
-//             </Button>
-
-          
-//           </Paper>
-//         </Grid>
-
-//           {/* Carte Gestion des Caisses ouvrir une caisse */}
-//           <Grid item xs={12} md={4}>
-//           <Paper sx={{ p: 3, textAlign: "center" }}>
-//             <Typography variant="h6">Ouvrir une caisse</Typography>
-//             <Button
-//               variant="contained"
-//               color="primary"
-//               sx={{ mt: 2 }}
-//               onClick={() => navigate("/supervisor/cash-registers")}
-//             >
-//               Accéder
-//             </Button>
-//           </Paper>
-//         </Grid>
-       
-//       </Grid>
-
-       
-      
-//     </Container>
-//   );
-// };
-
-// export default SupervisorDashboard;
-
-
-
 import React, { useState, useEffect } from "react";
 import { Container, Grid, Card, CardContent, CardActions, Typography, Button, Box, Divider } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -83,6 +5,7 @@ import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import LockIcon from "@mui/icons-material/Lock";
+import AssessmentIcon from "@mui/icons-material/Assessment"; // 🧠 Ajout de 
 
 import api from "../../services/api"; // Assure-toi d'avoir bien configuré ton API
 
@@ -152,7 +75,30 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
     useEffect(() => {
       fetchCashiers();
     }, []);
-  
+
+
+
+    const handleCloseCashRegister = async (cashRegisterId) => {
+      const montantFermeture = window.prompt("Entrez le montant de fermeture de la caisse :");
+    
+      if (!montantFermeture || isNaN(montantFermeture)) {
+        alert("Montant invalide.");
+        return;
+      }
+    
+      try {
+        const res = await api.put(`/cash-registers/close/${cashRegisterId}`, {
+          closingAmount: parseFloat(montantFermeture),
+        });
+        alert("✅ Caisse fermée avec succès !");
+        fetchCashiers(); // 🔁 Mettre à jour la liste
+      } catch (err) {
+        console.error("❌ Erreur fermeture de caisse :", err);
+        alert("Erreur lors de la fermeture de la caisse.");
+      }
+    };
+    
+
 
   return (
     <Container>
@@ -215,6 +161,9 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
           </Card>
         </Grid>
 
+
+
+
         {/* 🔥 Carte Statistiques */}
         <Grid item xs={12} md={4}>
           <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
@@ -230,16 +179,153 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
         </Grid>
       </Grid>
 
+      {/* 📊 Carte Reporting des caisses */}
+<Grid item xs={12} md={4}   sx={{ mt:5 }}>
+  <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
+    <CardContent>
+      <Typography variant="h6" sx={{ textAlign: "center", fontWeight: "bold" }}>
+        Reporting des Caisses
+      </Typography>
+      <Divider sx={{ my: 2 }} />
+      <Typography variant="body2" sx={{ textAlign: "center" }}>
+        Visualisez les transactions de caisse, les soldes et les écarts
+      </Typography>
+    </CardContent>
+    <CardActions sx={{ justifyContent: "center" }}>
+      <Button
+        variant="contained"
+        color="success"
+        startIcon={<LockIcon />}
+        onClick={() => navigate("/supervisor/reports/cash-registers")}
+        sx={{ mt: 1, mb: 2 }}
+      >
+        Consulter
+      </Button>
+    </CardActions>
+  </Card>
+</Grid>
+
+<Grid item xs={12} md={4} sx={{ mt: 5 }}>
+  <Card
+    sx={{
+      borderRadius: 4,
+      boxShadow: 6,
+      transition: "transform 0.3s",
+      "&:hover": {
+        transform: "scale(1.03)",
+        marginTop: 5,
+      },
+    }}
+  >
+    <CardContent>
+      <Box display="flex" justifyContent="center" alignItems="center" mb={2}>
+        <AssessmentIcon color="warning" sx={{ fontSize: 40 }} />
+      </Box>
+      <Typography
+        variant="h6"
+        sx={{ textAlign: "center", fontWeight: "bold", color: "text.primary" }}
+      >
+        Rapports de Fermeture de Caisses
+      </Typography>
+      <Divider sx={{ my: 2 }} />
+      <Typography variant="body2" sx={{ textAlign: "center", color: "text.secondary" }}>
+        Consultez les rapports de fermeture pour contrôler les soldes, écarts et justifications des caissiers.
+      </Typography>
+    </CardContent>
+    <CardActions sx={{ justifyContent: "center" }}>
+      <Button
+        variant="contained"
+        color="warning"
+        onClick={() => navigate("/supervisor/reports/closing")}
+        sx={{ mt: 1, mb: 2, px: 4 }}
+      >
+        Voir les rapports
+      </Button>
+    </CardActions>
+  </Card>
+</Grid>
+
+
+{/* 📊 Carte Rapport Journalier */}
+<Grid item xs={12} md={4}   sx={{ mt:5}}>
+  <Card
+    sx={{
+      borderRadius: 4,
+      boxShadow: 6,
+      transition: "transform 0.3s",
+      "&:hover": {
+        transform: "scale(1.03)",
+        marginTop:5,
+      },
+    }}
+  >
+    <CardContent>
+      <Box display="flex" justifyContent="center" alignItems="center" mb={2} >
+        <AssessmentIcon color="info" sx={{ fontSize: 40 }} />
+      </Box>
+      <Typography
+        variant="h6"
+        sx={{ textAlign: "center", fontWeight: "bold", color: "text.primary" }}
+      >
+        Rapport Journalier par Caissier
+      </Typography>
+      <Divider sx={{ my: 2 }} />
+      <Typography variant="body2" sx={{ textAlign: "center", color: "text.secondary" }}>
+        Visualisez les opérations par caissier pour une date donnée
+      </Typography>
+    </CardContent>
+    <CardActions sx={{ justifyContent: "center" }}>
+      <Button
+        variant="contained"
+        color="info"
+        onClick={() => navigate("/supervisor/reports/daily")}
+        sx={{ mt: 1, mb: 2, px: 4 }}
+      >
+        Voir rapport
+      </Button>
+    </CardActions>
+  </Card>
+</Grid>
+
       <Box mt={5} mb= {20}>
     <Typography variant="h5">Détails par Caissier</Typography>
     <Divider sx={{ my: 2 }} />
-    {currentCashiers.map(cashier => (
+    {/* {currentCashiers.map(cashier => (
       <Card key={cashier._id} sx={{ mb: 2, p: 2 }}>
         <Typography variant="h6">{cashier.name} ({cashier.phone})</Typography>
         <Typography>Caisses Ouvertes : {cashier.openRegisters}</Typography>
         <Typography>Caisses Fermées : {cashier.closedRegisters}</Typography>
       </Card>
-    ))}
+    ))} */}
+
+{currentCashiers.map(cashier => (
+  <Card key={cashier._id} sx={{ mb: 2, p: 2 }}>
+    <Typography variant="h6">{cashier.name} ({cashier.phone})</Typography>
+    <Typography>Caisses Ouvertes : {cashier.openRegisters}</Typography>
+    <Typography>Caisses Fermées : {cashier.closedRegisters}</Typography>
+
+    {cashier.latestOpenRegister && (
+      <Box mt={2}>
+        <Typography variant="body2" color="text.secondary">
+          📍 Dernière caisse ouverte : {cashier.latestOpenRegister.registerNumber}
+        </Typography>
+        <Button
+          variant="contained"
+          color="error"
+          onClick={() => handleCloseCashRegister(cashier.latestOpenRegister._id)}
+          sx={{ mt: 1 }}
+        >
+          Fermer la caisse
+        </Button>
+      </Box>
+    )}
+  </Card>
+))}
+
+
+
+
+
     <Box display="flex" justifyContent="center" mt={3}>
       {Array.from({ length: Math.ceil(cashiers.length / itemsPerPage) }, (_, index) => (
         <Button

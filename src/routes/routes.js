@@ -55,7 +55,36 @@ import ChangePinPage from "../pages/ChangePinPage";
 
 
 import CashierInterCityHistory from "../pages/cashier/CashierInterCityHistory";
+import AdminDepositsReport from "../pages/admin/reports/AdminDepositsReport";
+import AdminWithdrawalsReport from "../pages/admin/reports/AdminWithdrawalsReport";
+import AdminSummaryTransactionsReport from "../pages/admin/reports/AdminSummaryTransactionsReport";
+import AdminCommissionsTaxesReport from "../pages/admin/reports/AdminCommissionsTaxesReport";
+import AdminInterCityByCityReport from "../pages/admin/reports/AdminInterCityByCityReport";
+import AdminInterCityBySupervisorReport from "../pages/admin/reports/AdminInterCityBySupervisorReport";
+import AdminUserToUserTransfersReport from "../pages/admin/reports/AdminUserToUserTransfersReport";
+import AdminOpenCashRegistersReport from "../pages/admin/reports/AdminOpenCashRegistersReport";
+import SupervisorCashRegisterReport from "../pages/supervisor/SupervisorCashRegisterReport";
+import SupervisorDailyReportPage from "../pages/supervisor/SupervisorDailyReportPage";
 
+import ActiveTontinesReportPage from "../pages/admin/ActiveTontinesReportPage";
+import TontineMembersReportPage from "../pages/admin/TontineMembersReportPage";
+import TontineCollectedReportPage from "../pages/admin/TontineCollectedReportPage";
+import TontineProgressReportPage from "../pages/admin/TontineProgressReportPage";
+
+import TontineBeneficiariesReportPage from "../pages/admin/TontineBeneficiariesReportPage";
+import PendingTontineCyclesPage from "../pages/admin/PendingTontineCyclesPage";
+import EditTontinePage from "../pages/user/EditTontinePage";
+
+import AdminCommissionsIntercityPage from "../pages/admin/reports/AdminCommissionsIntercityPage";
+
+
+import AdminCommissionsInteruserPage from "../pages/admin/reports/AdminCommissionsInteruserPage";
+import AdminCommissionsTontinePage from "../pages/admin/reports/AdminCommissionsTontinePage";
+import AdminCommissionsGlobalPage from "../pages/admin/reports/AdminCommissionsGlobalPage";
+import AllInterCityTransfersPage from "../pages/admin/reports/AllInterCityTransfersPage";
+import SupervisorClosingReportsPage from "../pages/supervisor/SupervisorClosingReportsPage";
+
+import SupervisorClosingReportDetailsPage from "../pages/supervisor/SupervisorClosingReportDetailsPage";
 
 const AppRoutes = () => {
   return (
@@ -232,6 +261,237 @@ element={<ProtectedRoute role="admin">
   }
 />
 
+
+<Route
+  path="/admin/reports/deposits"
+  element={
+    <ProtectedRoute role="admin">
+      <AdminDepositsReport />
+    </ProtectedRoute>
+  }
+/>
+
+
+<Route
+  path="/admin/reports/withdrawals"
+  element={
+    <ProtectedRoute role="admin">
+      <AdminWithdrawalsReport />
+    </ProtectedRoute>
+  }
+/>
+
+
+<Route
+  path="/admin/reports/summary-transactions"
+  element={
+    <ProtectedRoute role="admin">
+      <AdminSummaryTransactionsReport />
+    </ProtectedRoute>
+  }
+/>
+
+
+<Route
+  path="/admin/reports/commissions-taxes"
+  element={
+    <ProtectedRoute role="admin">
+      <AdminCommissionsTaxesReport />
+    </ProtectedRoute>
+  }
+/>
+
+
+<Route
+  path="/admin/reports/intercity-by-city"
+  element={
+    <ProtectedRoute role="admin">
+      <AdminInterCityByCityReport />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/admin/reports/intercity-by-supervisor"
+  element={
+    <ProtectedRoute role="admin">
+      <AdminInterCityBySupervisorReport />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/admin/reports/user-to-user"
+  element={
+    <ProtectedRoute role="admin">
+      <AdminUserToUserTransfersReport />
+    </ProtectedRoute>
+  }
+/>
+
+
+<Route
+  path="/admin/reports/open-cash-registers"
+  element={
+    <ProtectedRoute role="admin">
+      <AdminOpenCashRegistersReport />
+    </ProtectedRoute>
+  }
+/>
+
+
+
+<Route
+  path="/supervisor/reports/cash-registers"
+  element={
+    <ProtectedRoute role="supervisor">
+      <SupervisorCashRegisterReport />
+    </ProtectedRoute>
+  }
+/>
+
+
+<Route
+  path="/supervisor/reports/daily"
+  element={
+    <ProtectedRoute role="supervisor">
+      <SupervisorDailyReportPage />
+    </ProtectedRoute>
+  }
+/>
+
+
+<Route
+  path="/admin/reports/tontines/active"
+  element={
+    <ProtectedRoute role="admin">
+      <ActiveTontinesReportPage />
+    </ProtectedRoute>
+  }
+/>
+
+<Route 
+  path="/supervisor/reports/closing" 
+  element={
+    <ProtectedRoute role="supervisor">
+      <SupervisorClosingReportsPage />
+    </ProtectedRoute>
+  }   
+/>
+
+
+<Route
+  path="/supervisor/reports/closing/:reportId"
+  element={
+    <ProtectedRoute role="supervisor">
+      <SupervisorClosingReportDetailsPage />
+    </ProtectedRoute>
+  }
+/>
+
+
+<Route
+  path="/admin/reports/tontines/members"
+  element={
+    <ProtectedRoute role="admin">
+      <TontineMembersReportPage />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/admin/reports/tontines/collected"
+  element={
+    <ProtectedRoute role="admin">
+      <TontineCollectedReportPage />
+    </ProtectedRoute>
+  }
+/>
+
+
+<Route
+  path="/admin/reports/tontines/progress"
+  element={
+    <ProtectedRoute role="admin">
+      <TontineProgressReportPage />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/admin/reports/tontines/beneficiaries"
+  element={
+    <ProtectedRoute role="admin">
+      <TontineBeneficiariesReportPage />
+    </ProtectedRoute>
+  }
+/>
+
+
+<Route
+  path="/admin/reports/tontines/pending"
+  element={
+    <ProtectedRoute role="admin">
+      <PendingTontineCyclesPage />
+    </ProtectedRoute>
+  }
+/>
+
+
+<Route
+  path="/tontines/:tontineId/edit"
+  element={
+    <ProtectedRoute role="user">
+      <EditTontinePage />
+    </ProtectedRoute>
+  }
+/>
+
+
+
+
+
+<Route
+  path="/admin/commissions/intercity"
+  element={
+    <ProtectedRoute role="admin">
+      <AdminCommissionsIntercityPage />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/admin/commissions/interuser"
+  element={
+    <ProtectedRoute role="admin">
+      <AdminCommissionsInteruserPage />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/admin/commissions/tontine"
+  element={
+    <ProtectedRoute role="admin">
+      <AdminCommissionsTontinePage />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/admin/commissions/global"
+  element={
+    <ProtectedRoute role="admin">
+      <AdminCommissionsGlobalPage />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/admin/reports/intercity-all"
+  element={
+    <ProtectedRoute role="admin">
+      <AllInterCityTransfersPage />
+    </ProtectedRoute>
+  }
+/>
 
 
       {/* Rediriger vers l'accueil si aucune route ne correspond */}

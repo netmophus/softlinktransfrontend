@@ -264,15 +264,101 @@ const handleAddFunds = async () => {
 
 
 
+
+  // const handleCloseCashRegister = async (id) => {
+  //   const closingAmount = window.prompt("Entrez le montant de fermeture de la caisse :");
+  
+  //   if (!closingAmount || isNaN(closingAmount)) {
+  //     alert("Montant invalide.");
+  //     return;
+  //   }
+  
+  //   try {
+  //     const response = await api.put(`/supervisor/cash-registers/close/${id}`, {
+  //       closingAmount: parseFloat(closingAmount),
+  //     });
+  
+  //     console.log("✅ Réponse de fermeture :", response.data);
+  
+  //     fetchCashRegisters(); // 🔁 Rafraîchir la liste après fermeture
+  
+  //     // ✅ Afficher les infos du rapport
+  //     const { expectedClosingAmount, discrepancy } = response.data;
+  
+  //     alert(
+  //       `✅ Caisse fermée avec succès !\n\nMontant attendu : ${expectedClosingAmount} XOF\nÉcart : ${discrepancy} XOF`
+  //     );
+  
+  //     setMessage("✅ Caisse fermée avec succès !");
+  //     setMessageType("success");
+  //     setTimeout(() => {
+  //       setMessage("");
+  //       setMessageType("");
+  //     }, 5000);
+  //   } catch (err) {
+  //     console.error("❌ Erreur fermeture :", err);
+  //     // setMessage("❌ Erreur lors de la fermeture de la caisse.");
+  //     setMessage(
+  //       err.response?.data?.msg
+  //         ? "❌ " + err.response.data.msg
+  //         : "❌ Erreur lors de la fermeture de la caisse."
+  //     );
+      
+  //     setMessageType("error");
+  //     setTimeout(() => {
+  //       setMessage("");
+  //       setMessageType("");
+  //     }, 5000);
+  //   }
+  // };
+  
+
+
   const handleCloseCashRegister = async (id) => {
+    const closingAmount = window.prompt("Entrez le montant de fermeture de la caisse :");
+  
+    if (!closingAmount || isNaN(closingAmount)) {
+      alert("Montant invalide.");
+      return;
+    }
+  
     try {
-      await api.put(`/supervisor/cash-registers/close/${id}`);
-      fetchCashRegisters();
-      console.log(`✅ Caisse ${id} fermée avec succès.`);
+      const response = await api.put(`/supervisor/cash-registers/close/${id}`, {
+        closingAmount: parseFloat(closingAmount),
+      });
+  
+      // ✅ Afficher les infos du rapport (optionnel)
+      const { expectedClosingAmount, discrepancy } = response.data;
+  
+      alert(
+        `✅ Caisse fermée avec succès !\n\nMontant attendu : ${expectedClosingAmount} XOF\nÉcart : ${discrepancy} XOF`
+      );
+  
+      setMessage("✅ Caisse fermée avec succès !");
+      setMessageType("success");
+      setTimeout(() => {
+        setMessage("");
+        setMessageType("");
+      }, 3000);
+  
+      // ✅ Naviguer vers la page des rapports de fermeture
+      navigate("/supervisor/reports/closing");
+  
     } catch (err) {
-      console.error("❌ Erreur lors de la fermeture de la caisse :", err);
+      setMessage(
+        err.response?.data?.msg
+          ? "❌ " + err.response.data.msg
+          : "❌ Erreur lors de la fermeture de la caisse."
+      );
+      setMessageType("error");
+      setTimeout(() => {
+        setMessage("");
+        setMessageType("");
+      }, 5000);
     }
   };
+  
+
 
   const handleReopenCashRegister = async (id) => {
     const justification = prompt("Justification pour la réouverture :");
@@ -317,12 +403,10 @@ const handleAddFunds = async () => {
 
 
 
-  
-  
 
   return (
     <Container>
-      <Button variant="contained" onClick={() => navigate("/supervisor/dashboard")}>
+      <Button variant="contained" onClick={() => navigate("/supervisor/dashboard")}  sx={{ mt: 5}}>
         Retour au Dashboard
       </Button>
       <Typography variant="h4" sx={{ mb: 3, fontWeight: "bold" }}>
@@ -471,6 +555,7 @@ const handleAddFunds = async () => {
   handleReopenCashRegister={handleReopenCashRegister}
   handleViewTransactions={handleViewTransactions}
   handleOpenModal={handleOpenModal}
+
 />
 
     </Container>

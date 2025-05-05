@@ -8,15 +8,20 @@ const DepositHistoryPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
   const limit = 20; // Nombre de transactions par page
+  
+  const [totalPages, setTotalPages] = useState(1);
+
 
   useEffect(() => {
     fetchDeposits();
   }, [currentPage]);
 
+
   const fetchDeposits = async () => {
     try {
       const response = await api.get(`/cashier/history/deposits?page=${currentPage}&limit=${limit}`);
-      setDeposits(response.data);
+      setDeposits(response.data.deposits || []);
+      setTotalPages(response.data.totalPages || 1);
     } catch (err) {
       console.error("❌ Erreur lors du chargement des dépôts :", err);
     }
@@ -44,15 +49,15 @@ const DepositHistoryPage = () => {
   {deposits.map((deposit) => (
     <TableRow key={deposit._id}>
       <TableCell>{new Date(deposit.date).toLocaleString()}</TableCell>
-      <TableCell>{deposit.user?.name || "-"}</TableCell>
-      <TableCell>{deposit.user?.phone || "-"}</TableCell>
-      {/* <TableCell>{deposit.user?.city?.name || "N/A"}</TableCell> */}
+      <TableCell>{deposit.clientFirstName || "-"}</TableCell>
+      <TableCell>{deposit.clientPhone || "-"}</TableCell>
       <TableCell>{deposit.amount?.toLocaleString()} XOF</TableCell>
-      <TableCell>{deposit.cashier?.name || "-"}</TableCell>
-      <TableCell>{deposit.cashier?.city?.name || "N/A"}</TableCell>
+      <TableCell>{deposit.performedBy?.name || "-"}</TableCell>
+      <TableCell>{deposit.performedBy?.city?.name || "N/A"}</TableCell>
     </TableRow>
   ))}
 </TableBody>
+
 
         </Table>
       </Paper>

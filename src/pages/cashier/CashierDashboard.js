@@ -17,8 +17,9 @@ const CashierDashboard = () => {
   const [userAccount, setUserAccount] = useState("");
   const [amount, setAmount] = useState("");
 
-  const [totalCityTransfers, setTotalCityTransfers] = useState(0);
 
+
+  const [totals, setTotals] = useState({ completed: 0, pending: 0 });
 
 
   const [userName, setUserName] = useState("");
@@ -131,6 +132,7 @@ const CashierDashboard = () => {
       alert(`${transactionType === "deposit" ? "Dépôt" : "Retrait"} effectué avec succès !`);
       handleCloseModal();
       fetchCashRegister(); // Rafraîchir la caisse
+      fetchTotalTransactions(); // ✅ Rafraîchir les totaux dépôts/retraits !
     } catch (err) {
       console.error("❌ [FRONTEND] Erreur lors de la transaction :", err.response ? err.response.data : err);
       alert(`Erreur lors de la transaction : ${err.response ? err.response.data.msg : "Problème inconnu."}`);
@@ -138,22 +140,19 @@ const CashierDashboard = () => {
   };
   
 
-  const fetchTotalCityTransfers = async () => {
-    try {
-      const response = await api.get("/cashier/total-intercity-transfers");
-      setTotalCityTransfers(response.data.totalAmount || 0);
-    } catch (error) {
-      console.error("❌ Erreur récupération transferts inter-villes :", error);
-    }
+
+  const fetchTotals = async () => {
+    const res = await api.get("/cashier/total-intercity-transfers");
+    setTotals(res.data);
   };
   
   useEffect(() => {
-    fetchTotalCityTransfers();
+    fetchTotals();
   }, []);
   
 
   return (
-    <Container>
+    <Container sx={{ mb: 13 }}>
       <Typography variant="h4" sx={{ mb: 3, fontWeight: "bold" }}>
         Tableau de bord Guichetier
       </Typography>
@@ -229,7 +228,8 @@ const CashierDashboard = () => {
           onClick={() => navigate("/cashier/history/inter-city-transfers")}
         >
           <Typography variant="h6">🏙️ Transferts Inter-villes</Typography>
-          <Typography variant="h5">{totalCityTransfers.toLocaleString()} XOF</Typography>
+          <Typography variant="h6" color="green">  Effectués : {totals.completed.toLocaleString()} XOF </Typography>
+          <Typography variant="body2" color="orange">  En attente : {totals.pending.toLocaleString()} XOF </Typography>
         </Paper>
       </Grid>
 

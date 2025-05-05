@@ -143,11 +143,11 @@ const SendTransferForm = () => {
 
 
 
-  const handleDownloadReceipt = () => {
-    if (receiptUrl) {
-      window.open(receiptUrl, "_blank");
-    }
-  };
+  // const handleDownloadReceipt = () => {
+  //   if (receiptUrl) {
+  //     window.open(receiptUrl, "_blank");
+  //   }
+  // };
 
 
 

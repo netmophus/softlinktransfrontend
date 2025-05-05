@@ -45,6 +45,8 @@ const CashRegisterTable = ({ cashRegisters, handleOpenFundModal, handleOpenWithd
                     <Button variant="outlined" color="secondary" onClick={() => handleOpenWithdrawModal(cashRegister._id)} sx={{ mr: 1 }}>
                       ➖ Retirer Fond
                     </Button>
+
+
                     <Button variant="contained" color="error" onClick={() => handleCloseCashRegister(cashRegister._id)} sx={{ mr: 1 }}>
                       🔒 Fermer
                     </Button>

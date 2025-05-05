@@ -12,7 +12,7 @@ const PendingTransfersTable = () => {
   const [openModal, setOpenModal] = useState(false);
 const [selectedTransfer, setSelectedTransfer] = useState(null);
 
-const [cities, setCities] = useState([]);
+
 
 const handleOpenModal = (transfer) => {
     setSelectedTransfer(transfer);
@@ -71,19 +71,7 @@ const handleOpenModal = (transfer) => {
   };
 
   // ✅ Fonction pour effectuer le paiement
-  const handlePayment = async (transferId) => {
-    try {
-      await api.put(`/cashier/pay-transfer/${transferId}`);
-      setSuccessMessage("✅ Paiement effectué avec succès !");
-      setErrorMessage("");
 
-      // 🔄 Mettre à jour la liste après paiement
-      fetchPendingTransfers();
-    } catch (error) {
-      console.error("❌ Erreur lors du paiement :", error);
-      setErrorMessage("❌ Une erreur est survenue lors du paiement.");
-    }
-  };
 
   // ✅ Fonction pour annuler un transfert
   const handleCancel = async (transferId) => {
@@ -155,13 +143,13 @@ const handleOpenModal = (transfer) => {
                      Annuler
                    </Button> */}
 
-                    <Button
+                    {/* <Button
                       variant="outlined"
                       color="error"
-                      onClick={() => handleCancel(transfer._id)}
+                      onClick={() => confirmCancel(transfer._id)}
                     >
                       Annuler
-                    </Button>
+                    </Button> */}
 
                  </Stack>
                </TableCell>

@@ -8,6 +8,7 @@ import { Dialog, DialogActions, DialogTitle, DialogContent } from "@mui/material
 
 import { useAuth } from "../../context/AuthContext";
 
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -24,6 +25,7 @@ const TontinePage = () => {
 const [selectedTontine, setSelectedTontine] = useState(null);
 const [error, setError] = useState("");
 const [success, setSuccess] = useState("");
+const navigate = useNavigate();
 
 
 const [confirmOpen, setConfirmOpen] = useState(false); // Gère l'affichage du modal
@@ -168,36 +170,6 @@ const handleAddMember = async () => {
 
 
 
-// const handlePayment = async (tontineId, userId, cycleId) => {
-//   if (!userId) {
-//     console.error("🚨 Erreur : userId est undefined !");
-//     alert("Utilisateur non trouvé !");
-//     return;
-//   }
-
-//   if (!cycleId) {
-//     console.error("🚨 Erreur : cycleId est undefined !");
-//     alert("Cycle introuvable !");
-//     return;
-//   }
-
-//   console.log(`📡 Envoi du paiement avec tontineId: ${tontineId}, userId: ${userId}, cycleId: ${cycleId}`);
-
-//   try {
-//     const response = await api.post(`/api/tontines/${tontineId}/pay`, {
-//       userId,
-//       cycleId, // ✅ Utilise cycleId ici
-//       paymentMethod: "compte_virtuel",
-//     });
-
-//     console.log("✅ Paiement réussi :", response.data);
-//     alert("Paiement enregistré avec succès !");
-//     fetchMyTontines(); // 🔄 Rafraîchir après paiement
-//   } catch (error) {
-//     console.error("❌ Erreur lors du paiement :", error.response?.data || error.message);
-//     alert("Erreur lors du paiement.");
-//   }
-// };
 
 
 const handlePayment = async (tontineId, userId, cycleId) => {
@@ -327,45 +299,42 @@ const isCurrentMonthCycle = (dueDate) => {
                  
                  {!payment.hasPaid && (
   <>
-    {isCurrentMonthCycle(payment.cycle.dueDate) ? (
-      <Button
-        variant="contained"
-        color="primary"
-        size="small"
-        sx={{ ml: 2 }}
-        onClick={() => {
-          if (!currentUserId) {
-            console.error("🚨 Erreur : L'utilisateur n'est pas défini !");
-            alert("Erreur : Vous devez être connecté pour effectuer un paiement.");
-            return;
-          }
+<Box display="flex" flexDirection="column" alignItems="flex-start" gap={1} sx={{ mt: 1 }}>
+  {currentUserId === tontine.initiator?._id && (
+    <Button
+      variant="outlined"
+      size="small"
+      sx={{ mt: 2 }}
+      onClick={() => 
+     
+        navigate(`/tontines/${tontine._id}/edit`)}
+      
+    >
+      ✏️ Modifier
+    </Button>
+  )}
 
-          if (!payment?.cycle?._id) {
-            console.error("🚨 Erreur : Le cycle est introuvable !");
-            alert("Erreur : Le cycle de paiement est introuvable.");
-            return;
-          }
+  <Button
+    variant="contained"
+    color="primary"
+    size="small"
+    onClick={() => {
+      if (!currentUserId || !payment?.cycle?._id) {
+        alert("Erreur : Informations manquantes.");
+        return;
+      }
+      const confirmPayment = window.confirm(
+        `Confirmez-vous le paiement du cycle ${payment.cycle.cycleNumber} ?`
+      );
+      if (confirmPayment) {
+        handlePayment(tontine._id, currentUserId, payment.cycle._id);
+      }
+    }}
+  >
+    Payer
+  </Button>
+</Box>
 
-          const confirmPayment = window.confirm(
-            `Confirmez-vous le paiement du cycle ${payment.cycle.cycleNumber} ?`
-          );
-
-          if (confirmPayment) {
-            console.log("📡 Paiement en cours pour le cycle :", payment.cycle);
-            handlePayment(tontine._id, currentUserId, payment.cycle._id);
-          }
-        }}
-      >
-        Payer
-      </Button>
-    ) : (
-      <Typography
-        variant="body2"
-        sx={{ color: "gray", fontStyle: "italic", ml: 2 }}
-      >
-        Paiement possible uniquement durant le mois du cycle
-      </Typography>
-    )}
   </>
 )}
 
