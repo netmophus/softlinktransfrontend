@@ -21,3 +21,4 @@ yarn-error.log*
 .vscode/
 .idea/
 .DS_Store
+echo "package-lock.json" >> .gitignore
