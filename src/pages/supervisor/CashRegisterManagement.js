@@ -4,6 +4,7 @@ import api from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import CashRegisterTable from "../../components/supervisor/CashRegisterTable";
 
+
 const CashRegisterManagement = () => {
   const [cashRegisters, setCashRegisters] = useState([]);
   const [cashiers, setCashiers] = useState([]); 
@@ -17,11 +18,13 @@ const CashRegisterManagement = () => {
 
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState(""); // success ou error
-  
+  const [pendingTransfers, setPendingTransfers] = useState([]);
+const [showModal, setShowModal] = useState(false);
 
   const [openWithdrawModal, setOpenWithdrawModal] = useState(false); // État du modal de retrait
 const [selectedRegisterWithdrawId, setSelectedRegisterWithdrawId] = useState(""); // ID de la caisse sélectionnée pour retrait
 const [withdrawAmount, setWithdrawAmount] = useState(""); // Montant du retrait
+
 
 
 
@@ -265,6 +268,8 @@ const handleAddFunds = async () => {
 
 
 
+
+
   // const handleCloseCashRegister = async (id) => {
   //   const closingAmount = window.prompt("Entrez le montant de fermeture de la caisse :");
   
@@ -278,11 +283,7 @@ const handleAddFunds = async () => {
   //       closingAmount: parseFloat(closingAmount),
   //     });
   
-  //     console.log("✅ Réponse de fermeture :", response.data);
-  
-  //     fetchCashRegisters(); // 🔁 Rafraîchir la liste après fermeture
-  
-  //     // ✅ Afficher les infos du rapport
+  //     // ✅ Afficher les infos du rapport (optionnel)
   //     const { expectedClosingAmount, discrepancy } = response.data;
   
   //     alert(
@@ -294,16 +295,17 @@ const handleAddFunds = async () => {
   //     setTimeout(() => {
   //       setMessage("");
   //       setMessageType("");
-  //     }, 5000);
+  //     }, 3000);
+  
+  //     // ✅ Naviguer vers la page des rapports de fermeture
+  //     navigate("/supervisor/reports/closing");
+  
   //   } catch (err) {
-  //     console.error("❌ Erreur fermeture :", err);
-  //     // setMessage("❌ Erreur lors de la fermeture de la caisse.");
   //     setMessage(
   //       err.response?.data?.msg
   //         ? "❌ " + err.response.data.msg
   //         : "❌ Erreur lors de la fermeture de la caisse."
   //     );
-      
   //     setMessageType("error");
   //     setTimeout(() => {
   //       setMessage("");
@@ -311,53 +313,51 @@ const handleAddFunds = async () => {
   //     }, 5000);
   //   }
   // };
-  
 
-
-  const handleCloseCashRegister = async (id) => {
+const handleCloseCashRegister = async (id) => {
+  try {
     const closingAmount = window.prompt("Entrez le montant de fermeture de la caisse :");
-  
+
     if (!closingAmount || isNaN(closingAmount)) {
       alert("Montant invalide.");
       return;
     }
-  
-    try {
-      const response = await api.put(`/supervisor/cash-registers/close/${id}`, {
-        closingAmount: parseFloat(closingAmount),
-      });
-  
-      // ✅ Afficher les infos du rapport (optionnel)
-      const { expectedClosingAmount, discrepancy } = response.data;
-  
-      alert(
-        `✅ Caisse fermée avec succès !\n\nMontant attendu : ${expectedClosingAmount} XOF\nÉcart : ${discrepancy} XOF`
-      );
-  
-      setMessage("✅ Caisse fermée avec succès !");
-      setMessageType("success");
-      setTimeout(() => {
-        setMessage("");
-        setMessageType("");
-      }, 3000);
-  
-      // ✅ Naviguer vers la page des rapports de fermeture
-      navigate("/supervisor/reports/closing");
-  
-    } catch (err) {
-      setMessage(
-        err.response?.data?.msg
-          ? "❌ " + err.response.data.msg
-          : "❌ Erreur lors de la fermeture de la caisse."
-      );
-      setMessageType("error");
-      setTimeout(() => {
-        setMessage("");
-        setMessageType("");
-      }, 5000);
+
+    const response = await api.put(`/supervisor/cash-registers/close/${id}`, {
+      closingAmount: parseFloat(closingAmount),
+    });
+
+    const { expectedClosingAmount, discrepancy } = response.data;
+
+    alert(
+      `✅ Caisse fermée avec succès !\n\nMontant attendu : ${expectedClosingAmount} XOF\nÉcart : ${discrepancy} XOF`
+    );
+
+    setMessage("✅ Caisse fermée avec succès !");
+    setMessageType("success");
+    setTimeout(() => {
+      setMessage("");
+      setMessageType("");
+    }, 3000);
+
+    navigate("/supervisor/reports/closing");
+
+  } catch (err) {
+    console.error("❌ Détail de l’erreur :", err.response?.data || err);
+
+    if (err.response?.data?.pendingTransfers) {
+      setPendingTransfers(err.response.data.pendingTransfers);
+      setShowModal(true); // ✅ Affiche la modale avec les transferts bloquants
     }
-  };
-  
+
+    setMessage(err.response?.data?.msg || "Erreur lors de la fermeture.");
+    setMessageType("error");
+    setTimeout(() => {
+      setMessage("");
+      setMessageType("");
+    }, 5000);
+  }
+};
 
 
   const handleReopenCashRegister = async (id) => {
@@ -379,14 +379,27 @@ const handleAddFunds = async () => {
 
 
     } catch (err) {
-      setMessage("❌ Erreur lors de la fermeture de la caisse.");
-      setMessageType("error");
-      setTimeout(() => {
-        setMessage("");
-        setMessageType("");
-      }, 5000);
-      
-    }
+  const msg = err.response?.data?.msg || "❌ Erreur inattendue lors de la fermeture.";
+  const transfers = err.response?.data?.pendingTransfers;
+
+  if (transfers && transfers.length > 0) {
+    const list = transfers
+      .map((t) => `• ${t.amount} XOF pour ${t.beneficiary} (${t.phone}) → ${t.destination}`)
+      .join("\n");
+
+    alert(`${msg}\n\nTransferts en attente :\n${list}`);
+  } else {
+    alert(msg);
+  }
+
+  setMessage(msg);
+  setMessageType("error");
+  setTimeout(() => {
+    setMessage("");
+    setMessageType("");
+  }, 5000);
+}
+
   };
   
 
@@ -557,6 +570,58 @@ const handleAddFunds = async () => {
   handleOpenModal={handleOpenModal}
 
 />
+
+
+
+
+
+<Dialog open={showModal} onClose={() => setShowModal(false)} maxWidth="md" fullWidth>
+  <DialogTitle>❌ Transferts en attente</DialogTitle>
+  <DialogContent>
+    <Typography variant="body1" gutterBottom>
+      Impossible de fermer la caisse : les transferts suivants doivent être traités avant.
+    </Typography>
+
+    <Table>
+   <TableHead>
+  <TableRow>
+    <TableCell><strong>Montant</strong></TableCell>
+    <TableCell><strong>Date</strong></TableCell>
+    <TableCell><strong>Type</strong></TableCell>
+    <TableCell><strong>Expéditeur</strong></TableCell>
+    <TableCell><strong>Tél. Expéditeur</strong></TableCell>
+    <TableCell><strong>Ville d'envoi</strong></TableCell>
+    <TableCell><strong>Bénéficiaire</strong></TableCell>
+    <TableCell><strong>Tél. Bénéficiaire</strong></TableCell>
+    <TableCell><strong>Ville de réception</strong></TableCell>
+  </TableRow>
+</TableHead>
+<TableBody>
+  {pendingTransfers.map((tr) => (
+    <TableRow key={tr._id}>
+      <TableCell>{tr.amount} XOF</TableCell>
+      <TableCell>{new Date(tr.createdAt).toLocaleString()}</TableCell>
+      <TableCell>{tr.isMobileTransfer ? "📱 Mobile" : "🏦 Guichet"}</TableCell>
+      <TableCell>{tr.senderFirstName} {tr.senderLastName}</TableCell>
+      <TableCell>{tr.senderPhone}</TableCell>
+      <TableCell>{tr.senderCity}</TableCell>
+      <TableCell>{tr.receiverName}</TableCell>
+      <TableCell>{tr.receiverPhone}</TableCell>
+      <TableCell>{tr.receiverCity}</TableCell>
+    </TableRow>
+  ))}
+</TableBody>
+
+    </Table>
+  </DialogContent>
+
+  <DialogActions>
+    <Button onClick={() => setShowModal(false)} color="primary" variant="contained">
+      Fermer
+    </Button>
+  </DialogActions>
+</Dialog>
+
 
     </Container>
   );

@@ -85,7 +85,11 @@ import AllInterCityTransfersPage from "../pages/admin/reports/AllInterCityTransf
 import SupervisorClosingReportsPage from "../pages/supervisor/SupervisorClosingReportsPage";
 
 import SupervisorClosingReportDetailsPage from "../pages/supervisor/SupervisorClosingReportDetailsPage";
-
+import AdminAgentsPage from "../pages/admin/AdminAgentsPage";
+import AgentDashboardPage from "../pages/agent/AgentDashboardPage";
+import ChatWithUserScreen from "../pages/agent/ChatWithUserScreen";
+import InternalSettlementPage from "../pages/admin/InternalSettlementPage";
+import AdminCompensationReport from '../pages/admin/AdminCompensationReport';
 const AppRoutes = () => {
   return (
     <Routes>
@@ -218,6 +222,18 @@ element={<ProtectedRoute role="admin">
     </ProtectedRoute>
   }
 />
+
+
+
+<Route
+  path="/admin/settlements"
+  element={
+    <ProtectedRoute role="admin">
+      <InternalSettlementPage />
+    </ProtectedRoute>
+  }
+/>
+
 
 
 <Route
@@ -492,6 +508,48 @@ element={<ProtectedRoute role="admin">
     </ProtectedRoute>
   }
 />
+
+
+<Route
+  path="/admin/agents"
+  element={
+    <ProtectedRoute role="admin">
+      <AdminAgentsPage />
+    </ProtectedRoute>
+  }
+/>
+
+
+
+<Route
+  path="/agent/dashboard"
+  element={
+    <ProtectedRoute role="agent">
+      <AgentDashboardPage />
+    </ProtectedRoute>
+  }
+/>
+
+
+<Route
+  path="/agent/chat"
+  element={
+    <ProtectedRoute role="agent">
+      <ChatWithUserScreen />
+    </ProtectedRoute>
+  }
+/>
+
+
+<Route
+  path="/admin/reports/compensations"
+  element={
+    <ProtectedRoute role="admin">
+      <AdminCompensationReport />
+    </ProtectedRoute>
+  }
+/>
+
 
 
       {/* Rediriger vers l'accueil si aucune route ne correspond */}

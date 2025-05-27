@@ -87,7 +87,22 @@ const AdminDashboard = () => {
         <Grid item xs={12} md={4}>
           {renderCard("Gérer les superviseurs", <GroupAddIcon />, "/admin/supervisors")}
         </Grid>
+             <Grid item xs={12} md={4}>
+  {renderCard("Gérer les agents", <GroupAddIcon />, "/admin/agents")}
+</Grid>
+
+  <Grid item xs={12} md={4}>
+    {renderCard("Compensations internes", <CompareArrowsIcon />, "/admin/settlements")}
+  </Grid>
+
+  <Grid item xs={12} md={4} sx={{marginTop:10}}>
+  {renderCard("Compensations internes par ville et par caisse", <CompareArrowsIcon />, "/admin/reports/compensations")}
+</Grid>
+
       </Grid>
+
+
+
 
       {/* Section 2 : Transactions de caisse */}
       <Typography variant="h5" sx={{ mb:5,  mt:8 }}>
@@ -131,6 +146,7 @@ const AdminDashboard = () => {
   <Grid item xs={12} md={4}>
     {renderCard("Commissions Tontine", <ShowChartIcon />, "/admin/commissions/tontine")}
   </Grid>
+  
   <Grid item xs={12} md={12} sx={{  mt:10 }}>
     {renderCard("Vue Globale des Commissions", <ReceiptLongIcon />, "/admin/commissions/global")}
   </Grid>
